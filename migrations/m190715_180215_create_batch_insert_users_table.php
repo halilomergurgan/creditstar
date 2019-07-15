@@ -12,6 +12,7 @@ class m190715_180215_create_batch_insert_users_table extends Migration
      */
     public function safeUp()
     {
+
         $this->createTable('{{%batch_insert_users}}', [
             'id' => $this->primaryKey(),
         ]);
