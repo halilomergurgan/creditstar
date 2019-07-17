@@ -2,14 +2,27 @@
 
 namespace app\models;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
+use Yii;
+
+/**
+ * user model
+ *
+ * @property integer $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property integer $personal_code
+ * @property integer $phone
+ * @property boolean $active
+ * @property boolean $dead
+ * @property string $lang
+ */
+class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
-    public $id;
     public $username;
     public $password;
     public $authKey;
     public $accessToken;
-
     private static $users = [
         '100' => [
             'id' => '100',
@@ -36,7 +49,98 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['first_name', 'last_name', 'email', 'personal_code', 'phone'], 'required'],
+            [['first_name', 'last_name', 'email', 'lang'], 'string'],
+            [['email'], 'email'],
+            [['phone'], 'integer'],
+            [
+                ['personal_code'],
+                'validatePersonalCode',
+                'message' => 'Please input a valid personal identification number.'
+            ],
+            [['active', 'dead'], 'boolean'],
+        ];
+    }
+
+    /**
+     * All user attributes
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'User Id',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'email' => 'Email',
+            'personal_code' => 'Personal Code',
+            'phone' => 'Phone',
+            'active' => 'Active',
+            'dead' => 'Is Dead?',
+            'lang' => 'Lang',
+
+        ];
+    }
+
+    /**
+     * check personal_code
+     * @param integer $personCode
+     * @return number
+     */
+    private function personalCodeControlNumber($personCode)
+    {
+        $multiplier1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1];
+        $multiplier2 = [3, 4, 5, 6, 7, 8, 9, 1, 2, 3];
+        $mod = null;
+        $total = 0;
+
+        for ($i = 0; $i < 10; $i++) {
+            $total += substr($personCode, $i, 1) * $multiplier1[$i];
+        }
+        $mod = $total % 11;
+
+        $total = 0;
+        if (10 === $mod) {
+            for ($i = 0; $i < 10; $i++) {
+                $total += substr($personCode, $i, 1) * $multiplier2[$i];
+            }
+            $mod = $total % 11;
+            if (10 === $mod) {
+                $mod = 0;
+            }
+        }
+
+        return $mod;
+    }
+
+    /**
+     * check validate personal_code
+     * @param $var
+     * @return bool
+     */
+    public function validatePersonalCode($var)
+    {
+        if (strlen($this->$var) != 11) {
+            $this->addError('personal_code', 'Not a valid Personal Code');
+
+            return false;
+        }
+        $control = $this->personalCodeControlNumber($this->$var);
+        if ($control != substr($this->$var, 10, 1)) {
+            $this->addError('personal_code', 'Not a valid Personal Code');
+
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @inheritdoc
      */
     public static function findIdentity($id)
     {
@@ -44,7 +148,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
@@ -53,7 +157,6 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
                 return new static($user);
             }
         }
-
         return null;
     }
 
@@ -70,12 +173,11 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
                 return new static($user);
             }
         }
-
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -83,7 +185,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAuthKey()
     {
@@ -91,7 +193,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validateAuthKey($authKey)
     {
@@ -102,7 +204,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      * Validates password
      *
      * @param string $password password to validate
-     * @return bool if password provided is valid for current user
+     * @return boolean if password provided is valid for current user
      */
     public function validatePassword($password)
     {

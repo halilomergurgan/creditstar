@@ -15,15 +15,21 @@ use yii\web\AssetBundle;
  */
 class AppAsset extends AssetBundle
 {
-    public $basePath = '@webroot';
-    public $baseUrl = '@web';
+    public $sourcePath = '@app/assets/bootstrap/';
     public $css = [
-        'css/site.css',
+        'stylesheets/styles.css'
     ];
+
     public $js = [
+        '//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js',
+        'javascripts/bootstrap.js',
+        'javascripts/custom.js',
+        'javascripts/yii.js'
     ];
+
+    public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
+
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
     ];
 }
