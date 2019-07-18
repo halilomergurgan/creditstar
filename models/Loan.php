@@ -43,6 +43,18 @@ class Loan extends \yii\db\ActiveRecord
     }
 
     /**
+     * Check user age before creating a loan
+     * {@inheritDoc}
+     * @see \yii\base\Model::scenarios()
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['create'] = ['user_id'];
+        return $scenarios;
+    }
+
+    /**
      * Loan has one user
      * @return \yii\db\ActiveQuery
      */
@@ -67,5 +79,26 @@ class Loan extends \yii\db\ActiveRecord
             'campaign' => 'Campaign',
             'status' => 'Status',
         ];
+    }
+
+
+    /**
+     * @param $var
+     * @return bool
+     */
+    public function validateUserAge($var)
+    {
+        $user = new User();
+
+        $user = $user->find()->where(['id' => $this->$var])->one();
+        if (!empty($user)) {
+            $age = $user->getPersonsAge($user->personal_code);
+            if ($age < 18) {
+                $this->addError('user_id', 'You can not use credit because you are under 18');
+            }
+        } else {
+            $this->addError('user_id', 'User Not Find');
+        }
+        return true;
     }
 }

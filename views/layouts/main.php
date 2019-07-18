@@ -89,6 +89,7 @@ AppAsset::register($this);
                     <ul class="nav nav-pills">
                         <li role="presentation"><?php echo Html::a("My Actions", ['#']);?></li>
                         <li role="presentation"><?php echo Html::a("Users", ['/user/index']);?></li>
+                        <li role="presentation"><?php echo Html::a("Loans", ['/loan/index']);?></li>
                     </ul>
                 </div>
             </div>

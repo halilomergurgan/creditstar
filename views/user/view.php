@@ -68,4 +68,15 @@ $dataProvider = new ActiveDataProvider([
     },
     ]); ?>
 </div>
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'button-orange button-large']) ?>
+        <?= Html::a('Create Loan', ['loan/create', 'userId' => $model->id], ['class' => 'button-orange button-large']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'button-warning button-large',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
 
