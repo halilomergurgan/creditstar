@@ -8,6 +8,7 @@ use app\models\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Loan;
 
 /**
  * This controller is used for crud operations
@@ -43,8 +44,9 @@ class UserController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+
     /**
-     * Create a new user
+     * Create a new User model
      * @return mixed
      */
     public function actionCreate()
@@ -88,6 +90,33 @@ class UserController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * View one user
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $user = $this->findModel($id);
+        $user->getPersonsAge($user['personal_code']);
+
+        //User's debt calculation
+        $loan = new Loan();
+        $usersLoans = $loan->find()->where(['user_id' => $id, 'status' => 1])->all();
+
+        $totalAmount = 0;
+        foreach ($usersLoans as $loan):
+            $totalAmount += $loan->amount;
+        endforeach;
+        //end_date Calculation
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+            'age' => $user->getPersonsAge($user->personal_code),
+            'birthday' => $user->getPersonsBirthday($user->personal_code),
+            'totalAmount' => $totalAmount
+        ]);
     }
 
     /**

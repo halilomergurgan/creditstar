@@ -74,17 +74,86 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function attributeLabels()
     {
         return [
-            'id' => 'User Id',
-            'first_name' => 'First Name',
-            'last_name' => 'Last Name',
-            'email' => 'Email',
+            'id'            => 'User Id',
+            'first_name'    => 'First Name',
+            'last_name'     => 'Last Name',
+            'email'         => 'Email',
             'personal_code' => 'Personal Code',
-            'phone' => 'Phone',
-            'active' => 'Active',
-            'dead' => 'Is Dead?',
-            'lang' => 'Lang',
+            'phone'         => 'Phone',
+            'active'        => 'Active',
+            'dead'          => 'Is Dead?',
+            'lang'          => 'Lang',
 
         ];
+    }
+
+    /**
+     * user hasMany loan foreignKey
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLoans()
+    {
+        return $this->hasMany(Loan::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * Calculate person age
+     * @param integer $personCode
+     */
+    public function getPersonsAge($personCode)
+    {
+        $year = substr($personCode, 1, 2);
+        $month = preg_replace('/^0/', '', substr($personCode, 3, 2));
+        $day = preg_replace('/^0/', '', substr($personCode, 5, 2));
+        $personFirstNumber = substr($personCode, 0, 1);
+        if ($personFirstNumber === '1' || $personFirstNumber === '2') {
+            $year += 1800;
+        } else {
+            if ($personFirstNumber === '3' || $personFirstNumber === '4') {
+                $year += 1900;
+            } else {
+                if ($personFirstNumber === '5' || $personFirstNumber === '6') {
+                    $year += 2000;
+                } else {
+                    $year += 2100;
+                }
+            }
+        }
+        $birthday = $year . "-" . $month . "-" . $day;
+        $from = new \DateTime($birthday);
+        $today = new \DateTime('today');
+        if ($from > $today) {
+            return 0;
+        }
+
+        return $from->diff($today)->y;
+    }
+
+    /**
+     * Returns the birthdate in YYYY-MM-DD format
+     * @param unknown $personCode
+     */
+    public function getPersonsBirthday($personCode)
+    {
+        $year = substr($personCode, 1, 2);
+        $month = preg_replace('/^0/', '', substr($personCode, 3, 2));
+        $day = preg_replace('/^0/', '', substr($personCode, 5, 2));
+        $firstNumber = substr($personCode, 0, 1);
+        if ($firstNumber === '1' || $firstNumber === '2') {
+            $year += 1800;
+        } else {
+            if ($firstNumber === '3' || $firstNumber === '4') {
+                $year += 1900;
+            } else {
+                if ($firstNumber === '5' || $firstNumber === '6') {
+                    $year += 2000;
+                } else {
+                    $year += 2100;
+                }
+            }
+        }
+        $birthday = $year . "-" . $month . "-" . $day;
+        return $birthday;
     }
 
     /**
@@ -138,7 +207,6 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         }
         return true;
     }
-
     /**
      * @inheritdoc
      */
