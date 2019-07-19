@@ -19,6 +19,8 @@ use Yii;
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
+    //Removed because it conflicts with User Id
+    //public $id;
     public $username;
     public $password;
     public $authKey;

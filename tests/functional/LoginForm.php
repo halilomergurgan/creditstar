@@ -1,5 +1,5 @@
 <?php
-class LoginFormCest
+class LoginForm
 {
     public function _before(\FunctionalTester $I)
     {
@@ -53,6 +53,6 @@ class LoginFormCest
             'LoginForm[password]' => 'admin',
         ]);
         $I->see('Logout (admin)');
-        $I->dontSeeElement('form#login-form');              
+        $I->dontSeeElement('form#login-form');
     }
 }

@@ -4,7 +4,7 @@ namespace tests\models;
 
 use app\models\ContactForm;
 
-class ContactFormTest extends \Codeception\Test\Unit
+class ContactForm extends \Codeception\Test\Unit
 {
     private $model;
     /**
