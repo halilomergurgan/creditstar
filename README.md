@@ -1,11 +1,3 @@
-#Test exercise for Creditstar Group
-
-As a very first shortlisting procedure of candidates, we have set up a test exercise that the interested applicants are executing.  
-
-We assume that interested applicants would be able to complete the test within a few days. 
-
-Once the test is completed please forward the results to <it.career@creditstar.com>.
-
 ## Setup
 
 Install Docker https://www.docker.com/get-started
@@ -66,7 +58,6 @@ You need to create a webapp that provides:
 
         docker-compose run --rm php codecept run
     
-**Once the assignment is done upload to a public git repository (github, bitbucket)**
 
 ## Evaluation Criteria
 
@@ -80,5 +71,3 @@ You need to create a webapp that provides:
 *  Code legibility
 *  Git usage. How commits are created and commented. We want to see the process of the work
 *  Finished code should be possible to deploy and run the same way as described in Setup section
-
-Should any technical questions arise feel free to contact: <it.career@creditstar.com>
